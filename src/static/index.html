@@ -1,0 +1,117 @@
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <title>hoi</title>
+</head>
+
+<body>
+  <h1>it works!</h1>
+  <h2>upload speed: <span id="upload">0</span> Mbps</h2>
+  <h2>download speed: <span id="download">0</span> Mbps</h2>
+  <button id="submit">Submit</button>
+
+  <script>
+    const len = 50;
+
+    function prepare_upload() {
+      console.log('pre_upload');
+      $.ajax({
+        type: 'get',
+        cache: false,
+        async: false,
+        timeout: 30000,
+        url: '/static/download',
+        success: function (data, textStatus, jqXHR) {
+          upload(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+        }
+      });
+    }
+
+
+    function upload(data) {
+      console.log('upload');
+      var uploadResTime = 0;
+      for (var i = 0; i < len; i++) {
+        $('#upload').text(Math.round(8 / (uploadResTime / i / 1000) * 100) / 100);
+        const reqTime = new Date();
+        $.ajax({
+          type: 'post',
+          cache: false,
+          async: false,
+          timeout: 30000,
+          contentType: 'multipart/form-data',
+          data: data,
+          url: '/',
+          success: function (data, textStatus, jqXHR) {
+            var date;
+            try {
+              date = new Date(xhr.getResponseHeader('Date'));
+            }
+            catch {
+              date = new Date();
+            }
+            const diff = date.getTime() - reqTime.getTime();
+            console.log('upload/done: ' + i);
+            console.log('upload.time: ' + date.getTime());
+            console.log('upload.diff: ' + diff);
+            uploadResTime += diff;
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('upload/error');
+          }
+        });
+
+        console.log(i);
+        console.log(uploadResTime / len);
+      }
+    }
+
+    function download() {
+      console.log('download');
+      var downloadResTime = 0;
+      for (var i = 0; i < len; i++) {
+        $('#download').text(Math.round(8 / (downloadResTime / i / 1000) * 100) / 100);
+        const reqTime = new Date();
+        $.ajax({
+          type: 'get',
+          cache: false,
+          async: false,
+          timeout: 30000,
+          url: '/static/download',
+          success: function (data, textStatus, jqXHR) {
+            var date;
+            try {
+              date = new Date(xhr.getResponseHeader('Date'));
+            }
+            catch {
+              date = new Date();
+            }
+            const diff = date.getTime() - reqTime.getTime();
+            console.log('download/done: ' + i);
+            console.log('download.time: ' + date.getTime());
+            console.log('download.diff: ' + diff);
+            downloadResTime += diff;
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('download/error');
+          }
+        });
+
+        console.log(i);
+        console.log(downloadResTime / len);
+      }
+    }
+
+    $('#submit').click(function () {
+      $('#submit').attr('disabled', true);
+
+      $.when(download()).done(prepare_upload());
+      $('#submit').attr('disabled', false);
+    })
+  </script>
+</body>
+
+</html>

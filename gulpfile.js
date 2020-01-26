@@ -13,4 +13,12 @@ gulp.task('build', function(){
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', gulp.series('build'));
+gulp.task('public', function(){
+  return gulp.src(['src/static/*'])
+    .pipe(abspath({
+      rootDir:'./src'
+    }))
+    .pipe(gulp.dest('dist/static/'));
+});
+
+gulp.task('default', gulp.series('build', 'public'));
