@@ -12,7 +12,9 @@
   <button id="submit">Submit</button>
 
   <script>
-    const len = 50;
+    const len = 10;
+    const bit = 8;
+    const byte = 2;
 
     function prepare_upload() {
       console.log('pre_upload');
@@ -35,7 +37,7 @@
       console.log('upload');
       var uploadResTime = 0;
       for (var i = 0; i < len; i++) {
-        $('#upload').text(Math.round(8 / (uploadResTime / i / 1000) * 100) / 100);
+        $('#upload').text(Math.round(bit * byte / (uploadResTime / i / 1000) * 100) / 100);
         const reqTime = new Date();
         $.ajax({
           type: 'post',
@@ -73,7 +75,7 @@
       console.log('download');
       var downloadResTime = 0;
       for (var i = 0; i < len; i++) {
-        $('#download').text(Math.round(8 / (downloadResTime / i / 1000) * 100) / 100);
+        $('#download').text(Math.round(bit * byte / (downloadResTime / i / 1000) * 100) / 100);
         const reqTime = new Date();
         $.ajax({
           type: 'get',
